@@ -1,9 +1,27 @@
 var dayEvents = {};
 
-loadTimeBlocks()
+loadDayEvents();
 
 function saveDayEvents() {
     console.log('saving day events');
+    localStorage.setItem('dayEvents', JSON.stringify(dayEvents))
+}
+
+function loadDayEvents() {
+    var events = JSON.parse(localStorage.getItem('dayEvents'));
+
+    if (!events) {
+        events = {};
+    }
+
+    var workday = 8;
+    var startOfDay = 9;
+    
+    for (var i = 0; i < workday; i++) {
+        var hour = i + startOfDay;
+        dayEvents[hour] = events[hour];
+        createTimeBlock(hour, events[hour])
+    }
 }
 
 function setTime(hour) {
@@ -24,12 +42,12 @@ function loadTimeBlocks() {
     // make an element for each time block
     for (var i = 0; i < workday; i++) {
         var hour = i + startOfDay;
-        dayEvents[hour] = 'To Load From File'
-        createTimeBlock(hour)
+        createTimeBlock(hour);
     };
+
 }
 
-function createTimeBlock(time) {
+function createTimeBlock(time, text) {
     
     // get formatted time
     var fmtTime = setTime(time)
@@ -39,6 +57,7 @@ function createTimeBlock(time) {
 
     var hour = $('<p>').addClass('col-2  hour d-flex justify-content-end align-items-center').text(fmtTime)
     var eventText = $('<p>').addClass('col-8 p-2 h-100 text-left bg-light event')
+    eventText.text(text);
     var saveBtn = $('<div>').addClass('col-2  rounded-end h-100 text-light d-flex align-items-center justify-content-center saveBtn').append(
         $('<i>').addClass('uil uil-save')
     )
