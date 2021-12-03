@@ -15,7 +15,7 @@ A simple time-management organizer for today's workday.
 
 ## Website
 
-[View the Live Site Here](https://scottrohrig.github.io/speed-cards/)
+[View the Live Site Here](https://scottrohrig.github.io/workday-scheduler/)
 
 ## Built With
 ![html](https://img.shields.io/badge/-HTML5-E34F26?logo=html5&logoColor=white&logoWidth=30)
