@@ -1,15 +1,21 @@
+// stores hour: event-text
 var dayEvents = {};
 
-var bgTypes = ['bg-white','bg-light', 'past', 'present', 'future']
+var bgTypes = ['bg-white', 'bg-light', 'past', 'present', 'future']
 
 var workday = 8;
 var startOfDay = 9;
 
-loadDayEvents();
+$(document).ready(function () {
+
+    loadDayEvents();
+    $('#currentDay').text(moment().format('dddd, MMMM Do YYYY'));
+})
+
 
 function saveDayEvents() {
     console.log('saving day events');
-    localStorage.setItem('dayEvents', JSON.stringify(dayEvents))
+    localStorage.setItem('dayEvents', JSON.stringify(dayEvents));
 }
 
 function loadDayEvents() {
@@ -28,11 +34,11 @@ function loadDayEvents() {
 
 function getFormattedTime(hour) {
     var now = new Date();
-        now.setHours(hour);
-        now.setMinutes(0);
-        now.setSeconds(0);
-        now.setMilliseconds(0);
-        now = moment(now).format('hA')
+    now.setHours(hour);
+    now.setMinutes(0);
+    now.setSeconds(0);
+    now.setMilliseconds(0);
+    now = moment(now).format('hA')
     return now
 }
 
@@ -40,7 +46,7 @@ function loadTimeBlocks() {
     // set num of blocks based on type
     var workday = 8;
     var startOfDay = 9;
- 
+
     // make an element for each time block
     for (var i = 0; i < workday; i++) {
         var hour = i + startOfDay;
@@ -50,10 +56,10 @@ function loadTimeBlocks() {
 }
 
 function createTimeBlock(time, text) {
-    
+
     // get formatted time
     var fmtTime = getFormattedTime(time)
-    
+
     var row = $('<div>').addClass('time-block row justify-content-center');
     row.attr('data-hour', time);
 
@@ -71,7 +77,7 @@ function createTimeBlock(time, text) {
 
 
 function removeBgStyles(ele) {
-    bgTypes.forEach(function(color) {
+    bgTypes.forEach(function (color) {
         ele.removeClass(color);
     })
 }
@@ -94,11 +100,11 @@ function auditEvents(timeBlock, eventEl) {
     } else if (data < now) {
         removeBgStyles(eventEl);
         eventEl.addClass('past');
-    } 
+    }
 }
 
 // returns time-block's event text content
-function getEventText(timeBlock){
+function getEventText(timeBlock) {
     var textEl = timeBlock.children('.event');
     var text = '';
     if (textEl.is('textarea')) {
@@ -112,14 +118,14 @@ function getEventText(timeBlock){
 // swap textarea back to <p>; 
 // Returns text content of textarea
 function revertTextArea(timeBlock) {
-    
+
     // get textarea ele
     var textArea = timeBlock.find('textarea');
     var text = textArea.val();
     if (text) {
         text = text.trim();
     }
-    
+
     // make p element
     var eventP = $('<p>').addClass($(textArea).attr('class')).text(text);
     auditEvents(timeBlock, eventP)
@@ -135,10 +141,10 @@ $('.container').sortable({
     scroll: false,
     tolerance: 'pointer',
     helper: 'clone',
-    activate: function(e) {
+    activate: function (e) {
         console.log($(this))
     },
-    update: function(e) {
+    update: function (e) {
         var container = $(this)
         // loop thru time-blocks
         container.children().each(function (child) {
@@ -168,7 +174,7 @@ $('.container').sortable({
 
 // on event clicked: edit
 // Note: event delegation -> '.time-block'=parent, '.event'=dynamic target element
-$('.time-block').on('click','.event', function() {
+$('.time-block').on('click', '.event', function () {
     console.log('edit clicked')
     // get text
     var text = $(this).text().trim();
@@ -185,21 +191,21 @@ $('.time-block').on('click','.event', function() {
 
 });
 
-$('.time-block').on('blur','.event',function() {
+$('.time-block').on('blur', '.event', function () {
     revertTextArea($(this).parents('.time-block'))
 });
 
 
 
 // save button pressed
-$('.time-block').on('click','.saveBtn', function() {
+$('.time-block').on('click', '.saveBtn', function () {
     // ERROR: When save click while Failed to execute 'replaceChild' on 'Node': The node to be removed is no longer a child of this node. Perhaps it was moved in a 'blur' event handler?
 
     // get row's hour id
     var timeBlock = $(this).parents('.time-block')
-    
-    var text = getEventText(timeBlock);  
-    
+
+    var text = getEventText(timeBlock);
+
     // save dayEvents
     var hour = timeBlock.attr('data-hour')
     dayEvents[hour] = text;
